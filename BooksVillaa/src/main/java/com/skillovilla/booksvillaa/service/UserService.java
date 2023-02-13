@@ -1,5 +1,6 @@
 package com.skillovilla.booksvillaa.service;
 
+import java.awt.print.Book;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -13,4 +14,9 @@ public interface UserService {
 	public String loginUser(UserDto userDto);
 
 	public List<Books> ShowAllBooks(String uniqueId);
+
+	public List<Books> SeachBookByName(String nameContains, String uniqueId);
+
+	public Books borrowOneBook(Integer bookId, String uniqueId);
+
 }

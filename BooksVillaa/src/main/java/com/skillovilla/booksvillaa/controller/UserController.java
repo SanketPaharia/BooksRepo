@@ -39,4 +39,13 @@ public class UserController {
 
 	}
 
+	@GetMapping("/searchByTitle/{UniqueId}/{nameContains}")
+	public ResponseEntity<List<Books>> searchByTitle(@PathVariable String UniqueId, @PathVariable String nameContains) {
+
+		List<Books> result = uService.SeachBookByName(nameContains, UniqueId);
+
+		return new ResponseEntity<List<Books>>(result, HttpStatus.OK);
+
+	}
+
 }

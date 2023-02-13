@@ -1,7 +1,10 @@
 package com.skillovilla.booksvillaa.service;
 
+import java.awt.print.Book;
+import java.lang.StackWalker.Option;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +59,65 @@ public class UserServiceImpl implements UserService {
 				return books;
 			} else {
 				throw new BooksException("No books in database");
+			}
+
+		} else {
+			throw new UserException("Login first");
+		}
+
+	}
+
+	@Override
+	public List<Books> SeachBookByName(String nameContains, String uniqueId) {
+		UserSession uSession = uSDao.findByUniqueId(uniqueId);
+		if (uSession != null) {
+			List<Books> books = bDao.findBytitleContains(nameContains);
+
+			if (books.size() != 0) {
+				return books;
+			} else {
+				throw new BooksException("No books in database");
+			}
+
+		} else {
+			throw new UserException("Login first");
+		}
+	}
+
+	@Override
+	public Books borrowOneBook(Integer bookId, String uniqueId) {
+		UserSession uSession = uSDao.findByUniqueId(uniqueId);
+		if (uSession != null) {
+
+			Optional<Books> opt = bDao.findById(bookId);
+
+			if (opt.isPresent()) {
+
+				Books book = opt.get();
+
+				if (book.getAvailablecopies() > 0) {
+
+					User user = uDao.findById(uSession.getCustomerId()).get();
+
+					int alredayBorrowed = user.getList().size();
+
+					if (alredayBorrowed <= 4) {
+						user.getList().add(book);
+						int newAvailable = book.getAvailablecopies() - 1;
+						book.setAvailablecopies(newAvailable);
+						bDao.save(book);
+
+						return book;
+					} else {
+						throw new BooksException("Already have 5 books borrowed");
+					}
+
+				} else {
+					throw new BooksException("No copies of selected book is present in the library");
+				}
+
+			} else {
+				throw new BooksException("No book found with this id");
 			}
 
 		} else {

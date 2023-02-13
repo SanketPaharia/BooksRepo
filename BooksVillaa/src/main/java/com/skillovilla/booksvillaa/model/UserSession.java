@@ -15,6 +15,8 @@ public class UserSession {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer SessionId;
+	private Integer CustomerId;
 	private String uniqueId;
 	private LocalTime time;
+	
 }
